@@ -215,7 +215,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-Tf-6xd">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="173"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="173"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
@@ -232,7 +232,7 @@
         <!--Register View Controller-->
         <scene sceneID="LOY-lQ-QAi">
             <objects>
-                <viewController storyboardIdentifier="RegisterViewController" id="esd-ul-TaA" customClass="RegisterViewController" customModule="smashElo3" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="register" id="esd-ul-TaA" customClass="RegisterViewController" customModule="smashElo3" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="VpE-0u-XvV"/>
                         <viewControllerLayoutGuide type="bottom" id="4mY-LU-Sgl"/>

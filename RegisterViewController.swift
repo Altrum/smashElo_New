@@ -10,26 +10,14 @@ import UIKit
 
 class RegisterViewController: UIViewController {
 
+    // TODO -- Remember to close loginView if they register
+    // IF not, navigate back to it
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print("Loaded RegisterViewController")
+        view.backgroundColor = .blue
 
-        // Do any additional setup after loading the view.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

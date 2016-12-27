@@ -8,32 +8,36 @@
 
 import UIKit
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var LoginImage: UIImageView!
     
     let inputContainerView: UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = .lightGray
+        containerView.backgroundColor = .white
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
         return containerView
     }()
     
-    let usernameTextField: UITextField = {
-        let tf = UITextField()
+    let usernameTextField: LoginTextField = {
+        let tf = LoginTextField()
         tf.placeholder = "Username"
+        tf.backgroundColor = UIColor.init(red: 238/255, green: 238/255, blue: 238/255, alpha: 1)
+        tf.layer.borderColor = UIColor.init(red: 218/255, green: 223/255, blue: 225/255, alpha: 1).cgColor
+        tf.layer.borderWidth = 1
         tf.layer.cornerRadius = 4
-        tf.backgroundColor = .white
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
     
-    let passwordTextField: UITextField = {
-        let tf = UITextField()
+    let passwordTextField: LoginTextField = {
+        let tf = LoginTextField()
         tf.placeholder = "Password"
         tf.layer.cornerRadius = 4
-        tf.backgroundColor = .white
+        tf.backgroundColor = UIColor.init(red: 238/255, green: 238/255, blue: 238/255, alpha: 1)
+        tf.layer.borderColor = UIColor.init(red: 218/255, green: 223/255, blue: 225/255, alpha: 1).cgColor
+        tf.layer.borderWidth = 1
         tf.isSecureTextEntry = true
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -65,7 +69,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         let label = UILabel()
         label.text = "Need an account?"
-        label.textColor = UIColor.init(red: 189, green: 195, blue: 199, alpha: 1) // might have to put /255
+        label.textColor = UIColor.init(red: 189/255, green: 195/255, blue: 199/255, alpha: 1) // might have to put /255
         label.translatesAutoresizingMaskIntoConstraints = false
         
         
@@ -79,7 +83,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         label.textColor = UIColor.init(red: 89/255, green: 171/255, blue: 227/255, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = true
-        label.target(forAction: #selector(toRegisterScreen), withSender: UIControlEvents.touchUpInside)
+        
+        // I want to do this but the delegation statement wont work unless in viewDidLoad()
+        // Hmm TODO??
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toRegisterScreen))
+//        label.addGestureRecognizer(tapGesture)
+//        tapGesture.delegate = self
+        
         
         return label
     }()
@@ -88,11 +98,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        LoginImage.image = #imageLiteral(resourceName: "ssb4logo")
       
         // I BELIEVE THESE ARE CORRECT FOR DELEGATION
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        
+        // Tap gesture for register button
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toRegisterScreen))
+        registerTextButton.addGestureRecognizer(tapGesture)
+        tapGesture.delegate = self
 
+        
         view.addSubview(inputContainerView)
         setupContainerView()
 
@@ -138,7 +156,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         // ------ END OF Constraints for loginButton ------ //
         // ------------------------------------------------ //
         
-        registerTextButton.leftAnchor.constraint(equalTo: loginButton.leftAnchor).isActive = true
+        
+        registerLabel.centerXAnchor.constraint(equalTo: inputContainerView.centerXAnchor).isActive = true
+        registerLabel.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15).isActive = true
+        
+        registerTextButton.leftAnchor.constraint(equalTo: registerLabel.rightAnchor, constant: 8).isActive = true
         registerTextButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15).isActive = true
 
         
@@ -175,26 +197,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
     }
     
+    // TODO -- need to use firebase here
     func loginClicked(sender: UIButton!){
         
         print ("Button clicked")
     }
     
-    // NOT WORKING RN (NOT GETTING CALLED SO MUST BE UP AT REGISTERTEXTBUTTON
-    // TODO
     func toRegisterScreen(sender: AnyObject){
         
         print("toRegisterScreen!")
-        
-        let registerPage = self.storyboard?.instantiateViewController(withIdentifier: "RegisterViewController") as! RegisterViewController
-        self.navigationController?.pushViewController(registerPage, animated: true)
 
-        
-//        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("RegisterViewController") as NextViewController
-//        self.navigationController?.pushViewController(RegisterViewController, animated: true)
-        
-        
+        let registerController = RegisterViewController()
+        present(registerController, animated: true, completion: nil)
+                
     }
 
     // MORE TODO
