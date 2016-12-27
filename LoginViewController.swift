@@ -34,6 +34,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         tf.placeholder = "Password"
         tf.layer.cornerRadius = 4
         tf.backgroundColor = .white
+        tf.isSecureTextEntry = true
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
@@ -55,8 +56,32 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
         button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(loginClicked), for: .touchUpInside)
         
         return button
+    }()
+    
+    let registerLabel: UILabel = {
+        
+        let label = UILabel()
+        label.text = "Need an account?"
+        label.textColor = UIColor.init(red: 189, green: 195, blue: 199, alpha: 1) // might have to put /255
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        return label
+        
+    }()
+    
+    let registerTextButton: UILabel = {
+        let label = UILabel()
+        label.text = "Register"
+        label.textColor = UIColor.init(red: 89/255, green: 171/255, blue: 227/255, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = true
+        label.target(forAction: #selector(toRegisterScreen), withSender: UIControlEvents.touchUpInside)
+        
+        return label
     }()
     
 
@@ -70,7 +95,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
         view.addSubview(inputContainerView)
         setupContainerView()
-        checkLoginAvailable()
 
     }
     
@@ -85,6 +109,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         inputContainerView.addSubview(usernameTextField)
         inputContainerView.addSubview(passwordTextField)
         inputContainerView.addSubview(loginButton)
+        inputContainerView.addSubview(registerLabel)
+        inputContainerView.addSubview(registerTextButton)
         
         // ---------------------------------------------------- //
         // --- Constraints for textFields in InputContainer --- //
@@ -111,21 +137,72 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginButton.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, constant: -60).isActive = true
         // ------ END OF Constraints for loginButton ------ //
         // ------------------------------------------------ //
+        
+        registerTextButton.leftAnchor.constraint(equalTo: loginButton.leftAnchor).isActive = true
+        registerTextButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15).isActive = true
 
         
     }
     
-    // TODO FIRGURE IT OUT
-    func checkLoginAvailable(){
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        checkLoginAvailable(sender: textField)
+    }
+    // Checks to see if forms are filled before allowoing login button
+    // Works kind of but it prematurely allows button with 0 charas in a text field
+    // TODO I GUESS
+    func checkLoginAvailable(sender: AnyObject){
  
-        if usernameTextField.text
-        loginButton.isEnabled = false
+        
+        // Could probably just adjust alpha values instead of assigning new colors
+        // TODO possibly
+        if ((usernameTextField.text != "") && (passwordTextField.text != ""))
+            || (usernameTextField.isEditing && passwordTextField.text != "")
+            || (passwordTextField.isEditing && usernameTextField.text != ""){
+            loginButton.isEnabled = true
+            
+            loginButton.alpha = 1
+            loginButton.backgroundColor = UIColor.init(red: 89/255, green: 171/255, blue: 227/255, alpha: 1)
+            loginButton.setTitleColor(.white, for: .normal)
         }
         else{
-            loginButton.isEnabled = true
+            loginButton.isEnabled = false
+
+            loginButton.alpha = 0.85
+            loginButton.backgroundColor = UIColor.init(red: 137/255, green: 196/255, blue: 244/255, alpha: 1)
+            loginButton.setTitleColor(.white, for: .disabled)
+
         }
 
     }
+    
+    func loginClicked(sender: UIButton!){
+        
+        print ("Button clicked")
+    }
+    
+    // NOT WORKING RN (NOT GETTING CALLED SO MUST BE UP AT REGISTERTEXTBUTTON
+    // TODO
+    func toRegisterScreen(sender: AnyObject){
+        
+        print("toRegisterScreen!")
+        
+        let registerPage = self.storyboard?.instantiateViewController(withIdentifier: "RegisterViewController") as! RegisterViewController
+        self.navigationController?.pushViewController(registerPage, animated: true)
 
+        
+//        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("RegisterViewController") as NextViewController
+//        self.navigationController?.pushViewController(RegisterViewController, animated: true)
+        
+        
+    }
+
+    // MORE TODO
+    // Have to do authentication for firebase with login/register
+    // I think matches should have its own branch -- to be seen globally, but you would need keys to access matches??
+    //      Kind of like discord channels per se
+    // This way I can login and have matches on my phone synced with a match on someone else's phone.
+    // Not sure if this is how to do this
+    
 
 }
