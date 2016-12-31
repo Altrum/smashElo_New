@@ -123,6 +123,8 @@
                     <connections>
                         <outlet property="addPictureButton" destination="IZs-lm-iSp" id="0nb-tz-f4f"/>
                         <outlet property="addPlayerView" destination="ZeZ-ev-Emc" id="FQ7-dg-u8m"/>
+                        <outlet property="favPlayerTextField" destination="1Jw-bo-4zG" id="MDG-EI-R24"/>
+                        <outlet property="nameTextField" destination="Dtx-N7-yKQ" id="GZI-T2-m2T"/>
                         <outlet property="visualEffect" destination="0XQ-ul-CJO" id="51m-VC-Vt9"/>
                     </connections>
                 </viewController>
@@ -163,6 +165,9 @@
                                     <state key="normal" title="Create">
                                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     </state>
+                                    <connections>
+                                        <action selector="createNewPlayer:" destination="8rJ-Kc-sve" eventType="touchUpInside" id="ue3-eX-x6x"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FTj-Gv-3jY">
                                     <rect key="frame" x="135" y="105" width="57" height="30"/>
@@ -227,7 +232,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PgB-Yx-moM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1602" y="0.0"/>
+            <point key="canvasLocation" x="-2305" y="0.0"/>
         </scene>
         <!--Register View Controller-->
         <scene sceneID="LOY-lQ-QAi">
@@ -245,7 +250,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uRL-ek-xTf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-871" y="0.0"/>
+            <point key="canvasLocation" x="-1513" y="0.0"/>
+        </scene>
+        <!--Matches View Controller-->
+        <scene sceneID="u6V-O2-Eli">
+            <objects>
+                <viewController id="kmg-FK-I8l" customClass="MatchesViewController" customModule="smashElo3" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="AEq-eF-tqC"/>
+                        <viewControllerLayoutGuide type="bottom" id="dHK-cO-OQ0"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gDS-EX-10O">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tgq-IU-2zW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-774" y="6"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -265,7 +288,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="0.0" y="0.0"/>
+            <point key="canvasLocation" x="-44" y="0.0"/>
         </scene>
     </scenes>
     <resources>

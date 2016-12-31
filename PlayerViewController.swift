@@ -7,14 +7,21 @@
 //
 
 import UIKit
+import Firebase
 
 class PlayerViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet weak var addPictureButton: RoundButton!
     @IBOutlet var addPlayerView: UIView!
     @IBOutlet weak var visualEffect: UIVisualEffectView!
-   
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var favPlayerTextField: UITextField!
+    
     var effect:UIVisualEffect!
+
+    // Firebase Database
+    var ref: FIRDatabaseReference!
+
     
     
     
@@ -26,6 +33,8 @@ class PlayerViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         addPlayerView.layer.cornerRadius = 5
 
+        ref = FIRDatabase.database().reference()
+
         
     }
     
@@ -34,6 +43,18 @@ class PlayerViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     @IBAction func dismissPopup(_ sender: Any) {
         dismissScreen()
+    }
+    @IBAction func createNewPlayer(_ sender: Any) {
+        guard let name = nameTextField.text else {
+            print("Invalid Name")
+            return
+        }
+        guard let favPlayer = favPlayerTextField.text else{
+            print("Invalid fav player")
+            return
+        }
+        // Add player to match here
+        
     }
     
     
