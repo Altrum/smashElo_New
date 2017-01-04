@@ -28,15 +28,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        FIRApp.configure()
+
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
+
+        let currentUser = FIRAuth.auth()?.currentUser
         
+        
+        //
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let startVC = storyboard.instantiateViewController(withIdentifier: "login")
+        var startVC = storyboard.instantiateViewController(withIdentifier: "login")
+        
+        if currentUser != nil{
+            startVC = storyboard.instantiateViewController(withIdentifier: "matches")
+        }
+        
         let navigator = UINavigationController(rootViewController: startVC)
         self.window?.rootViewController = navigator
         
-        FIRApp.configure()
+        
+        // FUI AUTH IDK HOW TO DO
+        // TODO
         let authUI = FUIAuth.defaultAuthUI()
         // You need to adopt a FUIAuthDelegate protocol to receive callback
         authUI?.delegate = self
@@ -44,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
         
         
         
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions) // IDK ABOUT THIS ANYMORE
+//          FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions) // IDK ABOUT THIS ANYMORE
         
         return true
     }

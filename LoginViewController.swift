@@ -104,6 +104,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         super.viewDidLoad()
         
         LoginImage.image = #imageLiteral(resourceName: "ssb4logo")
+        LoginImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         // Hide navigation bar
         // might need for viewWillDisappear as well
@@ -209,7 +210,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
 
     }
     
-    // TODO -- need to use firebase here
+    
     func loginClicked(sender: UIButton!){
         guard let email = emailTextField.text else {
             print("Invalid Email")
@@ -250,8 +251,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
     
     func loginSuccess(){
         
-        let nextVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "tabBar")
-        navigationController?.pushViewController(nextVC, animated: true)
+        let nextVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "matches")
+        let newNav = UINavigationController(rootViewController: nextVC)
+        navigationController?.present(newNav, animated: true, completion: nil)
         
     }
     // MORE TODO

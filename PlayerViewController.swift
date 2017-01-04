@@ -44,6 +44,7 @@ class PlayerViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func dismissPopup(_ sender: Any) {
         dismissScreen()
     }
+    
     @IBAction func createNewPlayer(_ sender: Any) {
         guard let name = nameTextField.text else {
             print("Invalid Name")
@@ -54,6 +55,7 @@ class PlayerViewController: UIViewController, UIImagePickerControllerDelegate, U
             return
         }
         // Add player to match here
+        
         
     }
     
