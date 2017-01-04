@@ -7,18 +7,83 @@
 //
 
 import UIKit
+import FBSDKCoreKit
 import Firebase
+import FirebaseAuthUI
+import FirebaseFacebookAuthUI
+import FirebaseGoogleAuthUI
+
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
 
     var window: UIWindow?
+    
 
-
+    
+    let providers: [FUIAuthProvider] = [
+        FUIGoogleAuth(),
+        FUIFacebookAuth()
+        ]
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         FIRApp.configure()
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+
+        let currentUser = FIRAuth.auth()?.currentUser
+        
+        
+        //
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        var startVC = storyboard.instantiateViewController(withIdentifier: "login")
+        
+        if currentUser != nil{
+            startVC = storyboard.instantiateViewController(withIdentifier: "matches")
+        }
+        
+        let navigator = UINavigationController(rootViewController: startVC)
+        self.window?.rootViewController = navigator
+        
+        
+        // FUI AUTH IDK HOW TO DO
+        // TODO
+        let authUI = FUIAuth.defaultAuthUI()
+        // You need to adopt a FUIAuthDelegate protocol to receive callback
+        authUI?.delegate = self
+        authUI?.providers = providers
+        
+        
+        
+//          FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions) // IDK ABOUT THIS ANYMORE
+        
         return true
+    }
+    
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        let handled = FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
+        
+        return handled
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        let sourceApplication = options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String?
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+            return true
+        }
+        // other URL handling goes here.
+        return false
+    }
+    
+    func authUI(_ authUI: FUIAuth, didSignInWith user: FIRUser?, error: Error?) {
+        if error != nil{
+            print(error)
+            return
+        }
+        
+        print("AuthUI successful")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

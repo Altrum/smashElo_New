@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuthUI
+
 
 class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
@@ -20,9 +23,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         return containerView
     }()
     
-    let usernameTextField: LoginTextField = {
+    
+    let emailTextField: LoginTextField = {
         let tf = LoginTextField()
-        tf.placeholder = "Username"
+        tf.placeholder = "Email"
         tf.backgroundColor = UIColor.init(red: 238/255, green: 238/255, blue: 238/255, alpha: 1)
         tf.layer.borderColor = UIColor.init(red: 218/255, green: 223/255, blue: 225/255, alpha: 1).cgColor
         tf.layer.borderWidth = 1
@@ -100,15 +104,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         super.viewDidLoad()
         
         LoginImage.image = #imageLiteral(resourceName: "ssb4logo")
-      
+        LoginImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        // Hide navigation bar
+        // might need for viewWillDisappear as well
+        self.navigationController?.isNavigationBarHidden = true
+        
+        
         // I BELIEVE THESE ARE CORRECT FOR DELEGATION
-        usernameTextField.delegate = self
+        emailTextField.delegate = self
         passwordTextField.delegate = self
         
         // Tap gesture for register button
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toRegisterScreen))
         registerTextButton.addGestureRecognizer(tapGesture)
         tapGesture.delegate = self
+                
 
         
         view.addSubview(inputContainerView)
@@ -124,7 +135,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         inputContainerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4).isActive = true
         inputContainerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         
-        inputContainerView.addSubview(usernameTextField)
+        inputContainerView.addSubview(emailTextField)
         inputContainerView.addSubview(passwordTextField)
         inputContainerView.addSubview(loginButton)
         inputContainerView.addSubview(registerLabel)
@@ -132,15 +143,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         
         // ---------------------------------------------------- //
         // --- Constraints for textFields in InputContainer --- //
-            // usernameTextField constraints
-        usernameTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 30).isActive = true
-        usernameTextField.topAnchor.constraint(equalTo: inputContainerView.topAnchor, constant: 30).isActive = true
-        usernameTextField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        usernameTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, constant: -60).isActive = true
+            // emailTextField constraints
+        emailTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 30).isActive = true
+        emailTextField.topAnchor.constraint(equalTo: inputContainerView.topAnchor, constant: 30).isActive = true
+        emailTextField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        emailTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, constant: -60).isActive = true
 
             // passWordTextField constraints
         passwordTextField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 30).isActive = true
-        passwordTextField.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 15).isActive = true
+        passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 15).isActive = true
         passwordTextField.heightAnchor.constraint(equalToConstant: 40).isActive = true
         passwordTextField.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, constant: -60).isActive = true
         // -------- END OF Constraints for textfields --------- //
@@ -169,6 +180,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
     func textFieldDidBeginEditing(_ textField: UITextField) {
         checkLoginAvailable(sender: textField)
     }
+
+    
     // Checks to see if forms are filled before allowoing login button
     // Works kind of but it prematurely allows button with 0 charas in a text field
     // TODO I GUESS
@@ -177,9 +190,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         
         // Could probably just adjust alpha values instead of assigning new colors
         // TODO possibly
-        if ((usernameTextField.text != "") && (passwordTextField.text != ""))
-            || (usernameTextField.isEditing && passwordTextField.text != "")
-            || (passwordTextField.isEditing && usernameTextField.text != ""){
+        if ((emailTextField.hasText) && (passwordTextField.hasText))
+            || (emailTextField.isEditing && passwordTextField.hasText)
+            || (passwordTextField.isEditing && emailTextField.text != ""){
             loginButton.isEnabled = true
             
             loginButton.alpha = 1
@@ -197,27 +210,60 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
 
     }
     
-    // TODO -- need to use firebase here
+    
     func loginClicked(sender: UIButton!){
+        guard let email = emailTextField.text else {
+            print("Invalid Email")
+            return
+        }
+        guard let password = passwordTextField.text else {
+            print("Invalid Password")
+            return
+        }
         
-        print ("Button clicked")
+        FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
+            if error != nil{
+                
+                // Show error message if not authenticated
+                let errorAlert = UIAlertController.init(title: "Invalid Login!", message: "Please check your login Information and try again.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Okay", style: .default)
+                errorAlert.addAction(okAction)
+                self.present(errorAlert, animated: true, completion: nil)
+                
+                return
+            }
+            
+            // else go to the tabBar Controller
+            self.loginSuccess()
+        }
     }
+
     
     func toRegisterScreen(sender: AnyObject){
         
         print("toRegisterScreen!")
 
-        let registerController = RegisterViewController()
-        present(registerController, animated: true, completion: nil)
-                
+        let registerVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "register")
+        navigationController?.pushViewController(registerVC, animated: true)
+        
     }
 
+    
+    func loginSuccess(){
+        
+        let nextVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "matches")
+        let newNav = UINavigationController(rootViewController: nextVC)
+        navigationController?.present(newNav, animated: true, completion: nil)
+        
+    }
     // MORE TODO
     // Have to do authentication for firebase with login/register
     // I think matches should have its own branch -- to be seen globally, but you would need keys to access matches??
     //      Kind of like discord channels per se
     // This way I can login and have matches on my phone synced with a match on someone else's phone.
     // Not sure if this is how to do this
+    // Should also dismiss the keyboard when pressed outside i believe
+    
     
 
 }
