@@ -27,6 +27,7 @@ class MatchesViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.title = "Matches"
         
+        
     }
     
 
