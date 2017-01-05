@@ -302,6 +302,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
 
     }
 
+    
+
     // MORE TODO
     // Have to do authentication for firebase with login/register
     // I think matches should have its own branch -- to be seen globally, but you would need keys to access matches??

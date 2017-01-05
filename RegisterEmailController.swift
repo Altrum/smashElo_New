@@ -168,6 +168,7 @@ class RegisterEmailController: UIViewController, UITextFieldDelegate {
         
         // Create user
         // Also checks to see validity
+        // Also adds to database
         FIRAuth.auth()?.createUser(withEmail: email, password: pass, completion: { (user, error) in
             if error != nil{
                 if let errorCode = FIRAuthErrorCode(rawValue: error!._code){
@@ -175,6 +176,10 @@ class RegisterEmailController: UIViewController, UITextFieldDelegate {
                 }
             }
             else{
+                
+                // add to database
+                let player = PlayerObject.init(name: "Player", email: email)
+                self.addToDatabase(user: user, player: player)
                 let VC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "matches")
                 self.navigationController?.pushViewController(VC, animated: true)
             }
@@ -182,6 +187,8 @@ class RegisterEmailController: UIViewController, UITextFieldDelegate {
         
     }
     
+    // Function to handle errors from the register
+    // Does a popup
     func errorPopup(error: FIRAuthErrorCode){
         
        let errorAlert = UIAlertController.init(title: "Email is already in use", message: "Please check your information and try again.", preferredStyle: .alert)
@@ -189,7 +196,7 @@ class RegisterEmailController: UIViewController, UITextFieldDelegate {
         
         switch error {
         case .errorCodeEmailAlreadyInUse:
-                errorAlert.title = "Email Already Registered!"
+            errorAlert.title = "Email Already Registered!"
         case .errorCodeNetworkError:
             errorAlert.title = "Network Error"
             errorAlert.message = "Please check your connection and try again"
@@ -210,6 +217,21 @@ class RegisterEmailController: UIViewController, UITextFieldDelegate {
         errorAlert.addAction(okAction)
         self.present(errorAlert, animated: true, completion: nil)
 
+    }
+    
+    // Function to add the user to the database
+    func addToDatabase(user: FIRUser?, player: PlayerObject){
+        let uid = user?.uid
+        let firedataref = FIRDatabase.database().reference(fromURL: "https://smashelonew.firebaseio.com/")
+        let userref = firedataref.child("users").child(uid!)
+        let values = ["name": player.name, "email": player.email, "careerElo": player.careerElo, "careerWins": player.careerWins, "careerLosses": player.careerLosses, "careerTotalGames": player.careerTotalGames, "matches": player.matches] as [String : Any]
+        
+        userref.updateChildValues(values, withCompletionBlock: { (error, userref) in
+            if error != nil{
+                print(error as Any)
+                return
+            }
+        })
     }
 }
 
