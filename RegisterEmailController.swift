@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Firebase
 
-class RegisterEmailController: UIViewController {
+class RegisterEmailController: UIViewController, UITextFieldDelegate {
     
     
     let containerView: UIView = {
@@ -59,7 +60,7 @@ class RegisterEmailController: UIViewController {
         }
         button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(loginClicked), for: .touchUpInside)
+        button.addTarget(self, action: #selector(registerClicked), for: .touchUpInside)
         
         return button
     }()
@@ -69,6 +70,8 @@ class RegisterEmailController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
         setupView()
         
         
@@ -118,9 +121,101 @@ class RegisterEmailController: UIViewController {
         // ------ END OF Constraints for loginButton ------ //
         // ------------------------------------------------ //
     }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        checkLoginAvailable(sender: textField)
+    }
+    
+    
+    // Checks to see if forms are filled before allowoing login button
+    // Works kind of but it prematurely allows button with 0 charas in a text field
+    // TODO I GUESS
+    func checkLoginAvailable(sender: AnyObject){
+        
+        
+        // Could probably just adjust alpha values instead of assigning new colors
+        // TODO possibly
+        if ((emailTextField.hasText) && (passwordTextField.hasText))
+            || (emailTextField.isEditing && passwordTextField.hasText)
+            || (passwordTextField.isEditing && emailTextField.text != ""){
+            registerButton.isEnabled = true
+            
+            registerButton.alpha = 1
+            registerButton.backgroundColor = UIColor.init(red: 89/255, green: 171/255, blue: 227/255, alpha: 1)
+            registerButton.setTitleColor(.white, for: .normal)
+        }
+        else{
+            registerButton.isEnabled = false
+            
+            registerButton.alpha = 0.85
+            registerButton.backgroundColor = UIColor.init(red: 137/255, green: 196/255, blue: 244/255, alpha: 1)
+            registerButton.setTitleColor(.white, for: .disabled)
+            
+        }
+        
+    }
+    
+    
+    func registerClicked(_sender: Any){
+        guard let email = emailTextField.text else {
+            print("invalid email text")
+            return
+        }
+        guard let pass = passwordTextField.text else {
+            print("invalid psswd text")
+            return
+        }
+        
+        // Create user
+        // Also checks to see validity
+        FIRAuth.auth()?.createUser(withEmail: email, password: pass, completion: { (user, error) in
+            if error != nil{
+                if let errorCode = FIRAuthErrorCode(rawValue: error!._code){
+                    self.errorPopup(error: errorCode)
+                }
+            }
+            else{
+                let VC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "matches")
+                self.navigationController?.pushViewController(VC, animated: true)
+            }
+        })
+        
+    }
+    
+    func errorPopup(error: FIRAuthErrorCode){
+        
+       let errorAlert = UIAlertController.init(title: "Email is already in use", message: "Please check your information and try again.", preferredStyle: .alert)
+        
+        
+        switch error {
+        case .errorCodeEmailAlreadyInUse:
+                errorAlert.title = "Email Already Registered!"
+        case .errorCodeNetworkError:
+            errorAlert.title = "Network Error"
+            errorAlert.message = "Please check your connection and try again"
+        case .errorCodeInvalidEmail:
+            errorAlert.title = "Invalid Email"
+            errorAlert.message = "Please check your email again"
+        case .errorCodeWeakPassword:
+            errorAlert.title = "Weak Password"
+            errorAlert.message = "Make your password stronger"
+        //below might need later
+        //case .errorCodeAccountExistsWithDifferentCredential
+        default:
+            errorAlert.title = "Error!"
+            errorAlert.message = "There was an error. Please try again"
+        }
+        
+        let okAction = UIAlertAction(title: "Dismiss", style: .default)
+        errorAlert.addAction(okAction)
+        self.present(errorAlert, animated: true, completion: nil)
+
+    }
 }
 
 // TODO 1/4/16
 // Register user with email
 // Also make the button into enable when theres items in fields
+// figure out git stuff holy
+
 

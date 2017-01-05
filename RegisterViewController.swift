@@ -73,6 +73,7 @@ class RegisterViewController: UIViewController, FBSDKLoginButtonDelegate {
     
     
     func setupView(){
+        navigationController?.setNavigationBarHidden(false, animated: true)
         view.addSubview(loginButton)
         view.addSubview(registerEmailButton)
         

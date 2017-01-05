@@ -119,15 +119,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toRegisterScreen))
         registerTextButton.addGestureRecognizer(tapGesture)
         tapGesture.delegate = self
-                
 
         
         view.addSubview(inputContainerView)
         setupContainerView()
 
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
     
     func setupContainerView() {
+        
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        
         // set x, y, height, width for
         // inputContainerView
         inputContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -221,14 +231,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
             return
         }
         
+        // Firebase authentication
         FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
             if error != nil{
-                
-                // Show error message if not authenticated
-                let errorAlert = UIAlertController.init(title: "Invalid Login!", message: "Please check your login Information and try again.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "Okay", style: .default)
-                errorAlert.addAction(okAction)
-                self.present(errorAlert, animated: true, completion: nil)
+                if let errorCode = FIRAuthErrorCode(rawValue: error!._code){
+                    // Popup for any errors
+                    self.errorPopup(error: errorCode)
+                }
                 
                 return
             }
@@ -256,6 +265,43 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UIGestureRecog
         navigationController?.present(newNav, animated: true, completion: nil)
         
     }
+    
+    func errorPopup(error: FIRAuthErrorCode){
+        
+        let errorAlert = UIAlertController.init(title: "Error", message: "Please check your information and try again.", preferredStyle: .alert)
+        
+        
+        switch error {
+        case .errorCodeEmailAlreadyInUse:
+            errorAlert.title = "Email Already Registered!"
+        case .errorCodeNetworkError:
+            errorAlert.title = "Network Error"
+            errorAlert.message = "Please check your connection and try again"
+        case .errorCodeInvalidEmail:
+            errorAlert.title = "Invalid Email"
+            errorAlert.message = "Please check your email again"
+        case .errorCodeWeakPassword:
+            errorAlert.title = "Weak Password"
+            errorAlert.message = "Make your password stronger"
+        case .errorCodeUserNotFound:
+            errorAlert.title = "User not Found"
+            errorAlert.message = "Please check your information and try again"
+        case .errorCodeWrongPassword:
+            errorAlert.title = "Wrong Password"
+            errorAlert.message = "Check your password and try again"
+            //below might need later
+        //case .errorCodeAccountExistsWithDifferentCredential
+        default:
+            errorAlert.title = "Error!"
+            errorAlert.message = "There was an error. Please try again"
+        }
+        
+        let okAction = UIAlertAction(title: "Dismiss", style: .default)
+        errorAlert.addAction(okAction)
+        self.present(errorAlert, animated: true, completion: nil)
+
+    }
+
     // MORE TODO
     // Have to do authentication for firebase with login/register
     // I think matches should have its own branch -- to be seen globally, but you would need keys to access matches??
