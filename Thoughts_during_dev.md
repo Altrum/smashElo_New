@@ -1,0 +1,27 @@
+- UI takes a long time, but its really fun
+- Learning everything by myself is sometimes really frustrating and discouraging
+- Database stuff is really difficult... Maybe it's because it's my first time.
+- Still don't know how to use FirebaseUI github extension thing
+    - I'll include it for now
+- I really don't know what I'm doing.
+- I want to understand best practices but I have a feeling I'm just brute forcing some things
+- Time flies when I work on this.  A lot of research and trial/error process
+- Decided to let go of UI until I make the app work
+- Last decision actually made development process a lot faster.  Glad I made this choice.
+- I just want to finish this app...
+- Git is still super unfamiliar to me and I really got frustrated when moving files or managing files with git -- Especially when I was moving computers
+- I realized I focused on things that I didn't need to worry about until further in the dev process in the beginning.
+- Lots of changes and modifications from the original idea as I worked on it
+- Whiteboards are pretty sick
+- Database management was relatively hard to think about
+    - Are search operations on Databases efficient?
+        - I feel like the methods I use or will use aren't going to be scalabe for huge crowds
+- So many questions!! Trying to find IOS developers at my school but getting no luck... :(
+    - If only my professor did IOS and not Android
+- Swift seems like a neat language so far.
+- Oh, facebook integration took some time. I was REALLY happy when I finally got it to work.
+- Pushing, presenting, and transitioning view controllers was the for some reason so difficult in the beginning
+    - I think it was because I didn't understand the Navigation hierarchy and stuff
+- Database listeners -- still figuring out what it exactly it is.
+- Then again, I'm trying to figure out everything and what it is lol
+    - I think I got a hang of some of the stuff, as long as I'm doing it right (fingers crossed)
